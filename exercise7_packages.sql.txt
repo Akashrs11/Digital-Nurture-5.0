@@ -1,0 +1,322 @@
+-- Scenario 1: Customer Management Package
+
+CREATE OR REPLACE PACKAGE CustomerManagement
+AS
+
+PROCEDURE AddCustomer
+(
+    id NUMBER,
+    cname VARCHAR2,
+    dob DATE,
+    bal NUMBER
+);
+
+
+PROCEDURE UpdateCustomer
+(
+    id NUMBER,
+    cname VARCHAR2
+);
+
+
+FUNCTION GetCustomerBalance
+(
+    id NUMBER
+)
+RETURN NUMBER;
+
+
+END CustomerManagement;
+/
+CREATE OR REPLACE PACKAGE BODY CustomerManagement
+AS
+
+
+PROCEDURE AddCustomer
+(
+    id NUMBER,
+    cname VARCHAR2,
+    dob DATE,
+    bal NUMBER
+)
+AS
+
+BEGIN
+
+INSERT INTO Customers
+VALUES
+(
+id,
+cname,
+dob,
+bal,
+SYSDATE
+);
+
+COMMIT;
+
+END;
+
+
+
+PROCEDURE UpdateCustomer
+(
+    id NUMBER,
+    cname VARCHAR2
+)
+AS
+
+BEGIN
+
+UPDATE Customers
+SET Name = cname
+WHERE CustomerID = id;
+
+COMMIT;
+
+END;
+
+
+
+FUNCTION GetCustomerBalance
+(
+id NUMBER
+)
+RETURN NUMBER
+AS
+
+bal NUMBER;
+
+BEGIN
+
+SELECT Balance
+INTO bal
+FROM Customers
+WHERE CustomerID = id;
+
+
+RETURN bal;
+
+
+END;
+
+
+END CustomerManagement;
+/
+-- Scenario 2: Employee Management Package
+
+
+CREATE OR REPLACE PACKAGE EmployeeManagement
+AS
+
+
+PROCEDURE HireEmployee
+(
+id NUMBER,
+ename VARCHAR2,
+pos VARCHAR2,
+sal NUMBER,
+dept VARCHAR2
+);
+
+
+PROCEDURE UpdateEmployee
+(
+id NUMBER,
+sal NUMBER
+);
+
+
+FUNCTION AnnualSalary
+(
+id NUMBER
+)
+RETURN NUMBER;
+
+
+END EmployeeManagement;
+/
+CREATE OR REPLACE PACKAGE BODY EmployeeManagement
+AS
+
+
+PROCEDURE HireEmployee
+(
+id NUMBER,
+ename VARCHAR2,
+pos VARCHAR2,
+sal NUMBER,
+dept VARCHAR2
+)
+AS
+
+BEGIN
+
+INSERT INTO Employees
+VALUES
+(
+id,
+ename,
+pos,
+sal,
+dept,
+SYSDATE
+);
+
+COMMIT;
+
+END;
+
+
+
+PROCEDURE UpdateEmployee
+(
+id NUMBER,
+sal NUMBER
+)
+AS
+
+BEGIN
+
+UPDATE Employees
+SET Salary = sal
+WHERE EmployeeID=id;
+
+COMMIT;
+
+END;
+
+
+
+FUNCTION AnnualSalary
+(
+id NUMBER
+)
+RETURN NUMBER
+
+AS
+
+sal NUMBER;
+
+BEGIN
+
+SELECT Salary*12
+INTO sal
+FROM Employees
+WHERE EmployeeID=id;
+
+
+RETURN sal;
+
+
+END;
+
+
+END EmployeeManagement;
+/
+-- Scenario 3: Account Operations Package
+
+
+CREATE OR REPLACE PACKAGE AccountOperations
+AS
+
+
+PROCEDURE OpenAccount
+(
+accid NUMBER,
+custid NUMBER,
+atype VARCHAR2,
+bal NUMBER
+);
+
+
+PROCEDURE CloseAccount
+(
+accid NUMBER
+);
+
+
+FUNCTION TotalBalance
+(
+custid NUMBER
+)
+RETURN NUMBER;
+
+
+END AccountOperations;
+/
+CREATE OR REPLACE PACKAGE BODY AccountOperations
+AS
+
+
+PROCEDURE OpenAccount
+(
+accid NUMBER,
+custid NUMBER,
+atype VARCHAR2,
+bal NUMBER
+)
+AS
+
+BEGIN
+
+INSERT INTO Accounts
+VALUES
+(
+accid,
+custid,
+atype,
+bal,
+SYSDATE
+);
+
+COMMIT;
+
+END;
+
+
+
+PROCEDURE CloseAccount
+(
+accid NUMBER
+)
+AS
+
+BEGIN
+
+DELETE FROM Accounts
+WHERE AccountID=accid;
+
+COMMIT;
+
+END;
+
+
+
+FUNCTION TotalBalance
+(
+custid NUMBER
+)
+RETURN NUMBER
+
+AS
+
+total NUMBER;
+
+
+BEGIN
+
+SELECT SUM(Balance)
+INTO total
+FROM Accounts
+WHERE CustomerID=custid;
+
+
+RETURN total;
+
+
+END;
+
+
+END AccountOperations;
+/

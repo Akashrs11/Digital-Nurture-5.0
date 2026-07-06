@@ -1,0 +1,88 @@
+-- Scenario 1: Calculate customer age
+
+CREATE OR REPLACE FUNCTION CalculateAge
+(
+    dob DATE
+)
+RETURN NUMBER
+AS
+    age NUMBER;
+BEGIN
+
+    age := TRUNC(MONTHS_BETWEEN(SYSDATE,dob)/12);
+
+    RETURN age;
+
+END;
+/
+-- Scenario 2: Calculate monthly loan installment
+
+CREATE OR REPLACE FUNCTION CalculateMonthlyInstallment
+(
+    loan_amount NUMBER,
+    interest_rate NUMBER,
+    duration_years NUMBER
+)
+RETURN NUMBER
+AS
+
+    monthly_rate NUMBER;
+    months NUMBER;
+    installment NUMBER;
+
+BEGIN
+
+    monthly_rate := interest_rate/(12*100);
+    months := duration_years*12;
+
+
+    installment :=
+    (loan_amount * monthly_rate) /
+    (1 - POWER(1+monthly_rate,-months));
+
+
+    RETURN installment;
+
+
+END;
+/
+-- Scenario 3: Check sufficient balance
+
+CREATE OR REPLACE FUNCTION HasSufficientBalance
+(
+    acc_id NUMBER,
+    amount NUMBER
+)
+RETURN BOOLEAN
+AS
+
+    acc_balance NUMBER;
+
+BEGIN
+
+    SELECT Balance
+    INTO acc_balance
+    FROM Accounts
+    WHERE AccountID = acc_id;
+
+
+    IF acc_balance >= amount THEN
+
+        RETURN TRUE;
+
+    ELSE
+
+        RETURN FALSE;
+
+    END IF;
+
+
+EXCEPTION
+
+WHEN NO_DATA_FOUND THEN
+
+    RETURN FALSE;
+
+
+END;
+/
